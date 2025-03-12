@@ -27,6 +27,7 @@ dependencies {
 	implementation("org.liquibase:liquibase-core")
 	implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.3")
 	implementation("org.apache.commons:commons-csv:1.13.0")
+	implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
 
 	runtimeOnly("org.postgresql:postgresql")
 

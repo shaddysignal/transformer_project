@@ -1,11 +1,14 @@
 package com.incode.transformer_project.transformers
 
+import com.incode.transformer_project.Logging
+import com.incode.transformer_project.log
 import org.springframework.stereotype.Component
 
 @Component
-class TransformerFactory {
+class TransformerFactory : Logging {
 
     fun produce(transformerId: String, params: Map<String, String> = mapOf()): Transformer {
+        log.trace { "Calling transformer factory produce with transformerId=${transformerId}" }
         return when (transformerId) {
             "remove" -> produceRemoveTransformer(
                 params["regexPattern"] ?: throw IllegalArgumentException("regexPattern should be present in params")
@@ -17,7 +20,9 @@ class TransformerFactory {
             )
 
             "uppercase" -> produceUppercaseTransformer()
+
             "lowercase" -> produceLowercaseTransformer()
+
             else -> throw IllegalArgumentException("transformerId not implemented")
         }
     }

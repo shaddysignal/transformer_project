@@ -1,5 +1,6 @@
 package com.incode.transformer_project.controllers
 
+import com.incode.transformer_project.Logging
 import com.incode.transformer_project.model.TransformRequest
 import com.incode.transformer_project.model.TransformResponse
 import com.incode.transformer_project.service.TransformService
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("api/")
 class TransformerController(
     @Autowired private val transformService: TransformService,
-) {
+) : Logging {
 
     @GetMapping(path = ["transform"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun transform(@RequestBody request: TransformRequest): ResponseEntity<TransformResponse> {

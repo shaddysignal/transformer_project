@@ -1,5 +1,7 @@
 package com.incode.transformer_project.controllers
 
+import com.incode.transformer_project.Logging
+import com.incode.transformer_project.log
 import com.incode.transformer_project.model.TransformExecutionListRequest
 import com.incode.transformer_project.model.TransformExecutionListResponse
 import com.incode.transformer_project.model.toTransformExecution
@@ -18,10 +20,11 @@ import org.springframework.web.bind.annotation.*
 class ReportController(
     @Autowired private val reportService: ReportService,
     @Autowired private val transformRecordRepository: TransformRecordRepository
-) {
+) : Logging {
 
     @GetMapping(path = ["execution-list"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun listExecutionReport(@RequestBody request: TransformExecutionListRequest): ResponseEntity<TransformExecutionListResponse> {
+        log.trace { "Calling execution list report with from=${request.from} to=${request.to}" }
         val executions = transformRecordRepository.findByDateBetween(request.from.toInstant(), request.to.toInstant())
 
         return ResponseEntity.ok(TransformExecutionListResponse(executions.map { it.toTransformExecution() }))
@@ -29,18 +32,20 @@ class ReportController(
 
     @GetMapping(path = ["execution-report{ext:.csv|}"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.TEXT_PLAIN_VALUE, "text/csv"])
     fun exportExecutionReport(@RequestBody request: TransformExecutionListRequest, @PathVariable ext: String): ResponseEntity<Resource> {
-        val fileInputStream: Resource
+        val fileStream: Resource
         val fileName: String
         val contentType: String
         if (ext.isEmpty()) {
-            fileInputStream = reportService.executionReportPlain(request.from, request.to)
+            fileStream = reportService.executionReportPlain(request.from, request.to)
             fileName = "execution_report_${request.from}_${request.to}.txt"
             contentType = "text/plain"
         } else {
-            fileInputStream = reportService.executionReportCsv(request.from, request.to)
+            fileStream = reportService.executionReportCsv(request.from, request.to)
             fileName = "execution_report_${request.from}_${request.to}.csv"
             contentType = "text/csv"
         }
+
+        log.trace { "Calling transformer executions report with filename=$fileName and contentType=$contentType" }
 
         val headers = HttpHeaders()
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${fileName}")
@@ -48,7 +53,7 @@ class ReportController(
 
         return ResponseEntity.ok()
             .headers(headers)
-            .body(fileInputStream)
+            .body(fileStream)
     }
 
 }
