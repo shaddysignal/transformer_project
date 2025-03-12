@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250311000000
+      author: ashubin
+      changes:
+        - createTable:
+            tableName: transform_record
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: transformer_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: params
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: input
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: output
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: error
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: date
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: transformer_id
+            indexName: transform_record_transformer_id_idx
+            tableName: transform_record
+        - createIndex:
+            columns:
+              - column:
+                  name: date
+            indexName: transform_record_date_idx
+            tableName: transform_record
+        - createIndex:
+            columns:
+              - column:
+                  name: output
+            indexName: transform_record_output_idx
+            tableName: transform_record
