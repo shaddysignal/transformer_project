@@ -2,6 +2,7 @@ package com.incode.transformer_project.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.incode.transformer_project.IntegrationTest
+import com.incode.transformer_project.model.TransformPair
 import com.incode.transformer_project.model.TransformRequest
 import com.incode.transformer_project.model.TransformResponse
 import com.incode.transformer_project.repository.TransformRecordRepository
@@ -31,12 +32,13 @@ class TransformerControllerTest(
 
     test("transform request") {
         val request =
-            TransformRequest("test", listOf("remove" to mapOf("regexPattern" to "te"), "uppercase" to mapOf()))
+            TransformRequest("test", listOf(TransformPair("remove", mapOf("regexPattern" to "te")), TransformPair("uppercase")))
 
+        val body = objectMapper.writeValueAsString(request)
         val result = mockMvc.perform(
             get("/api/transform")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(body))
             .andExpect(status().isOk)
             .andReturn()
 
@@ -56,7 +58,7 @@ class TransformerControllerTest(
 
     test("transform request error") {
         val request =
-            TransformRequest("test", listOf("remove" to mapOf("regexPattern" to "*"), "uppercase" to mapOf()))
+            TransformRequest("test", listOf(TransformPair("remove", mapOf("regexPattern" to "*")), TransformPair("uppercase")))
 
         val result = mockMvc.perform(
             get("/api/transform")

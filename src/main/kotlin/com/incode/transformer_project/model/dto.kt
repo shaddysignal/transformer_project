@@ -3,7 +3,8 @@ package com.incode.transformer_project.model
 import java.time.Instant
 import java.time.LocalDate
 
-data class TransformRequest(val input: String, val transformers: List<Pair<String, Map<String, String>>>)
+data class TransformRequest(val input: String, val transformers: List<TransformPair>)
+data class TransformPair(val transformerId: String, val parameters: Map<String, String> = mapOf())
 data class TransformResponse(val output: String? = null, val error: String? = null)
 
 data class TransformExecution(
